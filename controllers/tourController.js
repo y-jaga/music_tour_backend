@@ -1,4 +1,9 @@
 const axios = require("axios");
+const {
+  validateConcertsQueryParams,
+  validateMerchandiseStallsQueryParams,
+  validateAfterPartiesQueryParams,
+} = require("../validations/index");
 
 // Create Axios instance
 const axiosInstance = axios.create({
@@ -9,6 +14,66 @@ const axiosInstance = axios.create({
     CLIENT_SECRET: process.env.CLIENT_SECRET,
   },
 });
+
+// Function to fetch concerts by artist and city
+const getConcertsByArtistAndCity = async (req, res) => {
+  const errors = validateConcertsQueryParams(req.query);
+
+  if (errors.length > 0) {
+    return res.status(400).json({ errors });
+  }
+
+  try {
+    const { artist, city } = req.query;
+    const response = await axiosInstance.get(
+      `/concerts/search?artist=${artist}&city=${city}`
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch concerts." });
+  }
+};
+
+// Function to fetch MerchandiseStalls by stallName
+const getMerchandiseStallsByStallName = async (req, res) => {
+  const errors = validateMerchandiseStallsQueryParams(req.query);
+
+  if (errors.length > 0) {
+    return res.status(400).json({ errors });
+  }
+
+  try {
+    const { stallName } = req.query;
+    const response = await axiosInstance.get(
+      `/merchandiseStalls/search?stallName=${stallName}`
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch MerchandiseStalls." });
+  }
+};
+
+// Function to fetch AfterParties by city
+const getAfterPartiesByCity = async (req, res) => {
+  const errors = validateAfterPartiesQueryParams(req.query);
+
+  if (errors.length > 0) {
+    return res.status(400).json({ errors });
+  }
+
+  try {
+    const { city } = req.query;
+    const response = await axiosInstance.get(
+      `/afterParties/search?city=${city}`
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch after parties by city" });
+  }
+};
 
 // Function to fetch concerts
 const getConcerts = async (req, res) => {
@@ -108,4 +173,11 @@ const getAfterParties = async (req, res) => {
   }
 };
 
-module.exports = { getConcerts, getMerchandiseStalls, getAfterParties };
+module.exports = {
+  getConcerts,
+  getMerchandiseStalls,
+  getAfterParties,
+  getConcertsByArtistAndCity,
+  getMerchandiseStallsByStallName,
+  getAfterPartiesByCity,
+};
