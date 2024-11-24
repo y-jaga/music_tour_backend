@@ -1,19 +1,10 @@
-const axios = require("axios");
+const axiosInstance = require("../lib/axios.lib");
+
 const {
   validateConcertsQueryParams,
   validateMerchandiseStallsQueryParams,
   validateAfterPartiesQueryParams,
 } = require("../validations/index");
-
-// Create Axios instance
-const axiosInstance = axios.create({
-  baseURL: process.env.MICROSERVICE_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-    CLIENT_KEY: process.env.CLIENT_KEY,
-    CLIENT_SECRET: process.env.CLIENT_SECRET,
-  },
-});
 
 // Function to fetch concerts by artist and city
 const getConcertsByArtistAndCity = async (req, res) => {
